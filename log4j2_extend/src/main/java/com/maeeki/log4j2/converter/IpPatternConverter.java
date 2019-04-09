@@ -12,6 +12,8 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Enumeration;
 
+import static com.maeeki.log4j2.util.IpUtil.getIpAddress;
+
 /**
  * @author zhaotengchao
  * @since 2018-08-09 10:15
@@ -46,25 +48,4 @@ public class IpPatternConverter extends LogEventPatternConverter {
         toAppendTo.append(IP);
     }
 
-    private static InetAddress getIpAddress() throws SocketException {
-        Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
-        while (interfaces.hasMoreElements()) {
-            NetworkInterface current = interfaces.nextElement();
-            if (!current.isUp() || current.isLoopback() || current.isVirtual()){
-                continue;
-            }
-            Enumeration<InetAddress> addresses = current.getInetAddresses();
-            while (addresses.hasMoreElements()) {
-                InetAddress addr = addresses.nextElement();
-                if (addr.isLoopbackAddress()){
-                    continue;
-                }
-                //去掉还回和虚拟地址
-                if (addr.isSiteLocalAddress()) {
-                    return addr;
-                }
-            }
-        }
-        throw new SocketException("Can't get our ip address, interfaces are: " + interfaces);
-    }
 }
